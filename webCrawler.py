@@ -1,38 +1,25 @@
 import requests
 from bs4 import BeautifulSoup
-import Queue
-from collections import defaultdict
 from urlparse import urljoin
 import re
+from collections import Counter
+
 
 DOMAIN = 'gocardless.com'
 
 # Crawls a given url and produces a sitemap
 def webCrawler(url):
-    # TODO: Only add links with host gocardless
-    # Use BFS to make it balanced. DFS would be easier but less readable.
+    webCrawlerDFS(url, [url])  # DFS on given URL
 
-    # Needed for BFS
-    unvisited = Queue.Queue(str)  # queue of unvisited links
-    seen = defaultdict(bool)      # dictionary of seen links
-    seen[url] = True  # seen main page
-
-    # Start BFS on given URL
-    webCrawlerBFS(url, unvisited, seen)
-
-    # drawSitemap(seen.keys())
-
-    return None  # print a hierarchical tree structure?
-
-def webCrawlerBFS(url, unvisited, seen):
+def webCrawlerDFS(url, seen):
     for subURL in getValidURLsOnPageWithinDomain(url):
-        print 'subURL', subURL
-        if not seen[subURL]:  # found a URL we haven't seen before!
-            seen[subURL] = True
-            unvisited.put(subURL)  # visit it later
-    if not unvisited.empty():
-        webCrawlerBFS(unvisited.get(), unvisited, seen)  # search next URL in queue
+        if subURL in seen:
+            continue  # seen URL before
+        print subURL
+        seen.append(subURL)  # mark as seen
+        webCrawlerDFS(subURL, seen)  # search this URL
 
+# Joins base domain and relative link within domain to form a valid URL
 def constructValidURL(url, link):
     return urljoin(url, link)
 
@@ -45,11 +32,11 @@ def getURLsOnPage(url):
     for link in soup.findAll('a'):  # all anchors
         href = link.get('href')
         if href != None and len(href) > 1:  # non-empty link
-            url = urljoin(url, href)  # construct URL
-            urls.append(href)  # seen another URL!
+            url = urljoin(url, href)  # join URLs
+            urls.append(url)  # add to list
     return urls
 
-# Uses regex from Django to determine if URL is valid
+# Uses regex from Django to determine if URL is valid (better than querying via HTTP)
 def validURL(url):
     regex = re.compile(
         r'^https?://'
@@ -60,7 +47,7 @@ def validURL(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return regex.search(url) is not None
 
-# DOMAIN is in url
+# Checks if url is within domain
 def inDomain(url):
     return DOMAIN in url
 
@@ -71,4 +58,6 @@ def getValidURLsOnPageWithinDomain(url):
 GO_CARDLESS = "https://gocardless.com"
 
 webCrawler(GO_CARDLESS)
-# print getURLsOnPage(GO_CARDLESS)
+# url = 'https://gocardless.com/blog/'
+# print getValidURLsOnPageWithinDomain(url)
+# print getURLsOnPage(url)
