@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urlparse import urljoin
+from urlparse import urljoin, urlparse
 import re
 from collections import Counter
 
@@ -9,15 +9,24 @@ DOMAIN = 'gocardless.com'
 
 # Crawls a given url and produces a sitemap
 def webCrawler(url):
-    webCrawlerDFS(url, [url])  # DFS on given URL
+    seen = [url]
+    webCrawlerDFS(url, seen)  # DFS on given URL
+    print sorted(seen)
 
 def webCrawlerDFS(url, seen):
+    if len(seen) > 20:
+        return seen
     for subURL in getValidURLsOnPageWithinDomain(url):
-        if subURL in seen:
+        subURLid = URLid(subURL)
+        if subURLid in seen:
             continue  # seen URL before
-        print subURL
-        seen.append(subURL)  # mark as seen
+        print subURLid
+        seen.append(subURLid)  # mark as seen
         webCrawlerDFS(subURL, seen)  # search this URL
+
+def URLid(url):
+    parsed = urlparse(url)  # avoid counting http and https separately
+    return parsed.netloc + parsed.path  # unique ID for URL
 
 # Joins base domain and relative link within domain to form a valid URL
 def constructValidURL(url, link):
@@ -38,6 +47,10 @@ def getURLsOnPage(url):
 
 # Uses regex from Django to determine if URL is valid (better than querying via HTTP)
 def validURL(url):
+    bannedSubstrings = ['#']
+    for substring in bannedSubstrings:
+        if substring in url:
+            return False
     regex = re.compile(
         r'^https?://'
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
@@ -56,8 +69,11 @@ def getValidURLsOnPageWithinDomain(url):
     return filter(lambda x: inDomain(x) and validURL(x), getURLsOnPage(url))
 
 GO_CARDLESS = "https://gocardless.com"
-
 webCrawler(GO_CARDLESS)
-# url = 'https://gocardless.com/blog/'
-# print getValidURLsOnPageWithinDomain(url)
-# print getURLsOnPage(url)
+
+
+
+
+
+
+##############################################
