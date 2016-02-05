@@ -3,29 +3,42 @@ from bs4 import BeautifulSoup
 from urlparse import urljoin, urlparse
 import re
 from collections import Counter
+from tree import Tree
+
+# TODO: Edge case: help.gocardless.com/users/sign_in not directly accessible
+# TODO: help.gocardless.com/customer/en/portal/articles/1551521-how-do-i-add-a-customer- indented, but no help.gocardless.com/customer/en/portal/articles/ as parent
 
 
 DOMAIN = 'gocardless.com'
 
 # Crawls a given url and produces a sitemap
 def webCrawler(url):
-    seen = [URLid(url)]
-    webCrawlerDFS(url, seen)  # DFS on given URL
+    seen = set([URLid(url)])  # URLs seen so far
+    unvisited = []       # stack of URLs to visit
+    webCrawlerDFS(url, seen)
     seen = sorted(seen)
     for seenURL in seen:
         depth = Counter(seenURL)['/']
         print depth * '\t' + seenURL
 
-def webCrawlerDFS(url, seen):
+def webCrawlerDFS(url, seen, unvisited):
     if len(seen) > 100:
         return seen
-    for subURL in generateSubURLs(url):
-        subURLid = URLid(subURL)
-        if subURLid in seen:
-            continue  # seen URL before
-        print subURLid
-        seen.append(subURLid)  # mark as seen
-        webCrawlerDFS(subURL, seen)  # search this URL
+    # for subURL in generateSubURLs(url):
+    #     xsubURLid = URLid(subURL)
+    #     if subURLid in seen:
+    #         continue  # seen URL before
+    #     print subURLid
+    #     seen.append(subURLid)  # mark as seen
+    #     webCrawlerDFS(subURL, seen, unvisited)  # search this URL
+    subURLs = generateSubURLs(url)
+    unvisited.extend(filter(not in seen, subURLs))
+    seen.update(map(URLid, subURLs))  # record
+    if subURLid in seen:
+        continue  # seen URL before
+    print subURLid
+    seen.append(subURLid)  # mark as seen
+    webCrawlerDFS(subURL, seen, unvisited)  # search this URL
 
 def URLid(url):
     # TODO: fix - it includes www.gocardless.com and gocardless.com
@@ -69,7 +82,12 @@ def generateSubURLs(url):
     return filter(lambda x: inDomain(x) and validURL(x), getURLsOnPage(url))
 
 GO_CARDLESS = "https://gocardless.com"
-webCrawler('https://blog.gocardless.com')
+webCrawler(GO_CARDLESS)
+
+
+
+
+
 
 
 
