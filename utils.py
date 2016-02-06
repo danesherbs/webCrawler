@@ -12,7 +12,7 @@ cache = {}  # queried URLs
 
 
 # Checks syntax of URL
-# Regex from Djano github
+# Regex from Djano
 def correctSyntax(url):
     regex = re.compile(
         r'^https?://'

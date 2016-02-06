@@ -57,17 +57,17 @@ class URLtree(Tree):
         url = str(self.formatURL(url))
         path = url.split('/')
         if self.getData() == path[0]:
-            if len(path[1:]) > 0:  # more to add
+            if len(path[1:]) > 0:           # more to add
                 path = '/'.join(path[1:])
                 self.insert(path)
             return self
         for child in self.getChildren():
             if child.getData() == path[0]:  # if part of explored level
                 path = '/'.join(path[1:])
-                child.insert(path)  # assuming not identicle string
+                child.insert(path)          # assuming not identicle string
                 return self
-        path = '/'.join(path)  # relative URL
-        if path != '':  # don't add empty string
+        path = '/'.join(path)               # relative URL
+        if path != '':                      # don't add empty string
             self.addChild(path)
             print 'inserted', path, 'under', self.getData()
         return self

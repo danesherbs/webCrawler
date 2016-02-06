@@ -5,8 +5,8 @@ from Queue import Queue
 class WebCrawler(object):
 
     # Crawls given URL and produces sitemap (stored in current directory)
-    def crawl(self, url):
-        tree = self.webCrawlerBFS(url)
+    def crawl(self, url, limit=100):
+        tree = self.webCrawlerBFS(url, limit)
         sitemap = open('sitemap', 'w')
         sitemap.write(str(tree))
         sitemap.close()
@@ -27,11 +27,11 @@ class WebCrawler(object):
             if link not in visited:
                 visited.add(link)                     # mark as seen
                 map(queue.put, getLinksOnPage(link))  # visit new links later
-                print link + ':',
+                print link
                 tree.insert(link)                     # put in tree hierarchy
         return tree
 
 if __name__ == '__main__':
     GO_CARDLESS = "https://gocardless.com"
     webCrawler = WebCrawler()
-    webCrawler.crawl(GO_CARDLESS)
+    webCrawler.crawl(GO_CARDLESS, limit=200)
