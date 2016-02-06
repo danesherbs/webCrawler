@@ -11,7 +11,8 @@ cache = {}  # queried URLs
 
 
 
-# Regex from Djano
+# Checks syntax of URL
+# Regex from Djano github
 def correctSyntax(url):
     regex = re.compile(
         r'^https?://'
@@ -22,19 +23,24 @@ def correctSyntax(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return regex is not None
 
+# Checks if no queries in URL
 def noQueries(url):
     return urlparse(url).query == ''
 
+# Checks if no fragments in URL
 def noFragments(url):
     return urlparse(url).fragment == ''
 
-# Checks if url is within domain
+# Checks if URL is within domain
 def inDomain(url):
     return DOMAIN in urlparse(url).netloc
 
+# Combines multiple checks in one
 def validURL(url):
     return correctSyntax(url) and inDomain(url) and noFragments(url) and noQueries(url)
 
+# Retrieves URL (if redirected, retrieves redirected URL)
+# Uses proxy cache in case connection is slow
 def getURL(url):
     # TODO: slow connection - just check if valid
     try:

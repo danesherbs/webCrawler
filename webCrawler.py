@@ -13,7 +13,7 @@ class WebCrawler(object):
         print '\n\nSitemap saved in current directory.\n\n'
 
     # Helper for crawl -- constructs trie via breadth first search
-    def webCrawlerBFS(self, url):
+    def webCrawlerBFS(self, url, limit=100):
         # initialise visited URLs
         visited = set([getURL(url)])
         # initialise queue
@@ -22,7 +22,7 @@ class WebCrawler(object):
             queue.put(homeLink)
         # initialise tree
         tree = URLtree(url)
-        while(len(visited)<10):
+        while(len(visited) < limit):
             link = queue.get()                        # next link
             if link not in visited:
                 visited.add(link)                     # mark as seen
