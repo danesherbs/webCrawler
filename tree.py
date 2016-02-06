@@ -25,8 +25,8 @@ class Tree(object):
         return self.children
 
 
+from urlparse import urlparse
 class URLtree(object):
-    from utils import formatURL
 
     def __init__(self, data=None):
         self.children = []  # list of URLtrees
@@ -52,6 +52,19 @@ class URLtree(object):
     def getChildren(self):
         return self.children
 
+    # Helper for insert; omits 'http(s)://', 'www.' and trailing '/'
+    def formatURL(self, url):
+        urlParsed = urlparse(url)
+        url = urlParsed.netloc + urlParsed.path  # only keep domain and path
+        if len(url) > 4 and url[:4] == 'www.':   # omit 'www.'
+            url = url[4:]
+        if len(url) > 0 and url[-1] == '/':      # omit trailing '/'
+            url = url[:-1]
+        return url
+
+    # PROBLEM
+    #       url_given https://www.gocardless.com/blog/page27/
+    #       inserted  under page27
     def insert(self, url):
         # print 'url_given', url
         url = str(self.formatURL(url))
@@ -71,12 +84,13 @@ class URLtree(object):
                 child.insert(path)  # assuming not identicle string
                 return self
         path = '/'.join(path)  # relative URL
-        self.addChild(path)
+        if path != '':  # don't add empty string
+            self.addChild(path)
         print 'inserted', path, 'under', self.getData()
         return self
 
     def __str__(self):
-        pass  # PRINT THAT TREE!
+        return self.getData()
 
 # print urlparse('https://gocardless.com').path
 # print urlparse('https://gocardless.com/blog').path

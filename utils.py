@@ -63,15 +63,14 @@ def getLinksOnPage(url):
 
 
 
-# Helper for insert; omits 'http(s)://', 'www.' and trailing '/'
-def formatURL(self, url):
-    urlParsed = urlparse(url)
-    url = urlParsed.netloc + urlParsed.path  # only keep domain and path
-    if len(url) > 4 and url[:4] == 'www.':   # omit 'www.'
-        url = url[4:]
-    if len(url) > 0 and url[-1] == '/':      # omit trailing '/'
-        url = url[:-1]
-    return url
+def printTree(root):
+    visited, stack = set(), [root]
+    while stack:
+        subTree = stack.pop()  # next tree
+        if subTree not in visited:
+            visited.add(subTree)
+            stack.extend(subTree.getChildren())
+    return visited
 
 # print formatURL("https://gocardless.com")
 # print formatURL("https://gocardless.com/")
