@@ -60,13 +60,3 @@ def getLinksOnPage(url):
         if absURL is not None:        # if genuine URL
             links.append(absURL)      # add URL to list
     return links
-
-
-# print formatURL("https://gocardless.com")
-# print formatURL("https://gocardless.com/")
-# print formatURL("http://gocardless.com")
-# print formatURL("http://gocardless.com/")
-# print formatURL("http://gocardless.com/about/")
-# print formatURL("https://gocardless.com/about")
-# print formatURL("https://www.gocardless.com/about")
-# print formatURL("https://www.gocardless.com/about")

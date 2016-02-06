@@ -20,7 +20,7 @@ def webCrawlerDFS(url):
     # initialise tree
     tree = URLtree(url)
 
-    while(len(visited)<20):
+    while(len(visited)<250):
     # while(queue):
         link = queue.get()                        # next link
         if link not in visited:

@@ -24,6 +24,12 @@ class Tree(object):
     def getChildren(self):
         return self.children
 
+    def __str__(self, depth=0):
+        outputStr = "\t" * depth + str(self.getData()) + "\n"
+        for child in self.getChildren():
+            outputStr += child.__str__(depth+1)
+        return outputStr
+
 
 from urlparse import urlparse
 class URLtree(object):
@@ -62,17 +68,9 @@ class URLtree(object):
             url = url[:-1]
         return url
 
-    # PROBLEM
-    #       url_given https://www.gocardless.com/blog/page27/
-    #       inserted  under page27
     def insert(self, url):
-        # print 'url_given', url
         url = str(self.formatURL(url))
-        # print 'url_to_add', url
         path = url.split('/')
-        # print 'path[0]', path[0]
-        # print 'self.getData()', self.getData()
-        # print 'path[0] == self.getData()', path[0] == self.getData()
         if self.getData() == path[0]:
             if len(path[1:]) > 0:  # more to add
                 path = '/'.join(path[1:])
@@ -88,31 +86,3 @@ class URLtree(object):
             self.addChild(path)
             print 'inserted', path, 'under', self.getData()
         return self
-
-    def __str__(self, depth=0):
-        outputStr = "\t" * depth + str(self.getData()) + "\n"
-        for child in self.getChildren():
-            outputStr += child.__str__(depth+1)
-        return outputStr
-
-    # def __repr__(self):
-    #     return self.getData()
-
-# print urlparse('https://gocardless.com').path
-# print urlparse('https://gocardless.com/blog').path
-
-# test = 'https://gocardless.com/about/team'
-# test = urlparse(test).path  # get path from URL
-# test = test.split('/')
-# test = filter(lambda x: x != '', test)  # ignore initial slashes
-# print test
-
-# print urlparse('gocardless.com/about/team').path.split('/')
-
-
-# tree = Tree('gocardless.com')
-# tree.addChild('gocardless.com/features')
-# print tree.getData()
-# print tree.getChildren()
-# print tree.getChildren()[0]
-# print tree.getChildren()[0].getData()
