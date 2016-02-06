@@ -6,6 +6,7 @@ from Queue import Queue
 def webCrawler(url):
     # TODO: only works for "https://gocardless.com"
     tree = webCrawlerDFS(url)
+    print '\n' * 3
     print tree
 
 def webCrawlerDFS(url):

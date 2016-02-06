@@ -32,31 +32,16 @@ class Tree(object):
 
 
 from urlparse import urlparse
-class URLtree(object):
+class URLtree(Tree):
 
     def __init__(self, data=None):
         self.children = []  # list of URLtrees
         self.data = self.formatURL(data)
 
-    def setData(self, data):
-        self.data = data
-        return self
-
-    def getData(self):
-        return self.data
-
     def addChild(self, childData):
-        childTree = URLtree(childData)
+        childTree = URLtree(childData)  # add URLtree instead of Tree
         self.children.append(childTree)
         return self
-
-    def addChildren(self, childrenData):
-        for childData in childrenData:
-            self.addChild(childData)
-        return self
-
-    def getChildren(self):
-        return self.children
 
     # Helper for insert; omits 'http(s)://', 'www.' and trailing '/'
     def formatURL(self, url):
