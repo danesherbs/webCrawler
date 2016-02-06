@@ -53,9 +53,9 @@ class URLtree(object):
         return self.children
 
     def insert(self, url):
-        print 'url_given', url
+        # print 'url_given', url
         url = str(self.formatURL(url))
-        print 'url_to_add', url
+        # print 'url_to_add', url
         path = url.split('/')
         # print 'path[0]', path[0]
         # print 'self.getData()', self.getData()
@@ -74,6 +74,9 @@ class URLtree(object):
         self.addChild(path)
         print 'inserted', path, 'under', self.getData()
         return self
+
+    def __str__(self):
+        pass  # PRINT THAT TREE!
 
 # print urlparse('https://gocardless.com').path
 # print urlparse('https://gocardless.com/blog').path

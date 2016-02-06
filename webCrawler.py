@@ -5,9 +5,6 @@ from utils import getLinksOnPage, getURL
 def webCrawler(url):
     tree = webCrawlerDFS(url)
     # print tree
-    # for seenURL in visited:
-    #     depth = Counter(seenURL)['/']
-    #     print depth * '\t' + seenURL
 
 def webCrawlerDFS(url):
     # initialise visited nodes
@@ -18,17 +15,15 @@ def webCrawlerDFS(url):
     stack = homepageLinks
 
     # initialise tree
-    # tree = URLtree(url).addChildren(homepageLinks)
     tree = URLtree(url)
 
     # while(len(visited)<20):
     while(stack):
         link = stack.pop()  # next link
         if link not in visited:
-            # print link
             visited.add(link)                   # mark as seen
             stack.extend(getLinksOnPage(link))  # visit new links later
-            # print 'link', link, type(link)
+            print 'url_given', link
             tree.insert(link)                   # add link hierarchy
 
     return tree

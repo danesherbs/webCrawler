@@ -5,8 +5,11 @@ import requests
 from bs4 import BeautifulSoup
 
 
+
 DOMAIN = 'gocardless.com'
 cache = {}  # queried URLs
+
+
 
 # Regex from Djano
 def correctSyntax(url):
@@ -60,24 +63,7 @@ def getLinksOnPage(url):
 
 
 
-
-
-
-
-# Helper for insert; omits 'http(s)://' and trailing '/'
-# def formatURL(self, url):
-#     # TODO: www.gocardless.com
-#     if len(url) < 6:
-#         return url  # relative URL
-#     elif url[:4] == 'http':
-#         url = url.split('/')
-#         url = filter(lambda x: x != '', url)
-#         url = url[1:]  # ignore http(s)
-#         url = '/'.join(url)
-#     if url[-1] == '/':
-#         url = url[:-1]  # ignore trailing '/'
-#     return url
-
+# Helper for insert; omits 'http(s)://', 'www.' and trailing '/'
 def formatURL(self, url):
     urlParsed = urlparse(url)
     url = urlParsed.netloc + urlParsed.path  # only keep domain and path
