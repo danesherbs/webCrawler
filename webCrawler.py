@@ -34,4 +34,4 @@ class WebCrawler(object):
 if __name__ == '__main__':
     GO_CARDLESS = "https://gocardless.com"
     webCrawler = WebCrawler()
-    webCrawler.crawl(GO_CARDLESS, limit=200)
+    webCrawler.crawl(GO_CARDLESS)

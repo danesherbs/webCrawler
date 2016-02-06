@@ -5,10 +5,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-
 DOMAIN = 'gocardless.com'
 cache = {}  # queried URLs
-
 
 
 # Checks syntax of URL
