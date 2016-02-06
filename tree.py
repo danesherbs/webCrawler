@@ -89,8 +89,14 @@ class URLtree(object):
             print 'inserted', path, 'under', self.getData()
         return self
 
-    def __str__(self):
-        return self.getData()
+    def __str__(self, depth=0):
+        outputStr = "\t" * depth + str(self.getData()) + "\n"
+        for child in self.getChildren():
+            outputStr += child.__str__(depth+1)
+        return outputStr
+
+    # def __repr__(self):
+    #     return self.getData()
 
 # print urlparse('https://gocardless.com').path
 # print urlparse('https://gocardless.com/blog').path

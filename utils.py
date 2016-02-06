@@ -62,15 +62,6 @@ def getLinksOnPage(url):
     return links
 
 
-def printTree(root):
-    visited, stack = set(), [root]
-    while stack:
-        subTree = stack.pop()  # next tree
-        if subTree not in visited:
-            visited.add(subTree)
-            stack.extend(subTree.getChildren())
-    return visited
-
 # print formatURL("https://gocardless.com")
 # print formatURL("https://gocardless.com/")
 # print formatURL("http://gocardless.com")
