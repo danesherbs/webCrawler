@@ -1,94 +1,60 @@
-import requests
-from bs4 import BeautifulSoup
-from urlparse import urljoin, urlparse
-import re
-from collections import Counter
-from tree import Tree
-
-# TODO: Edge case: help.gocardless.com/users/sign_in not directly accessible
-# TODO: help.gocardless.com/customer/en/portal/articles/1551521-how-do-i-add-a-customer- indented, but no help.gocardless.com/customer/en/portal/articles/ as parent
-
-
-DOMAIN = 'gocardless.com'
+from tree import URLtree
+from utils import getLinksOnPage, getURL
 
 # Crawls a given url and produces a sitemap
 def webCrawler(url):
-    seen = set([URLid(url)])  # URLs seen so far
-    unvisited = []       # stack of URLs to visit
-    webCrawlerDFS(url, seen)
-    seen = sorted(seen)
-    for seenURL in seen:
-        depth = Counter(seenURL)['/']
-        print depth * '\t' + seenURL
+    tree = webCrawlerDFS(url)
+    # print tree
+    # for seenURL in visited:
+    #     depth = Counter(seenURL)['/']
+    #     print depth * '\t' + seenURL
 
-def webCrawlerDFS(url, seen, unvisited):
-    if len(seen) > 100:
-        return seen
-    # for subURL in generateSubURLs(url):
-    #     xsubURLid = URLid(subURL)
-    #     if subURLid in seen:
-    #         continue  # seen URL before
-    #     print subURLid
-    #     seen.append(subURLid)  # mark as seen
-    #     webCrawlerDFS(subURL, seen, unvisited)  # search this URL
-    subURLs = generateSubURLs(url)
-    unvisited.extend(filter(not in seen, subURLs))
-    seen.update(map(URLid, subURLs))  # record
-    if subURLid in seen:
-        continue  # seen URL before
-    print subURLid
-    seen.append(subURLid)  # mark as seen
-    webCrawlerDFS(subURL, seen, unvisited)  # search this URL
+def webCrawlerDFS(url):
+    # initialise visited nodes
+    visited = set([getURL(url)])
 
-def URLid(url):
-    # TODO: fix - it includes www.gocardless.com and gocardless.com
-    url = url.split('/')[2:]
-    url = filter(lambda x: x!='', url)
-    return '/'.join(url)
+    # initialise stack
+    homepageLinks = getLinksOnPage(url)
+    stack = homepageLinks
 
-# Takes a URL and returns an exhaustive list of links present on page
-def getURLsOnPage(url):
-    # TODO: check for valid URL; google.com doens't work but https://www.google.com does
-    rawHTML = requests.get(url).text  # extract raw HTML
-    soup = BeautifulSoup(rawHTML)  # used to parse raw HTML
-    urls = []  # list of urls present on page
-    for link in soup.findAll('a'):  # all anchors
-        href = link.get('href')
-        if href != None and len(href) > 1:  # non-empty link
-            url = urljoin(url, href)  # join URLs
-            urls.append(url)  # add to list
-    return urls
+    # initialise tree
+    # tree = URLtree(url).addChildren(homepageLinks)
+    tree = URLtree(url)
 
-# Uses regex from Django to determine if URL is valid (better than querying via HTTP)
-def validURL(url):
-    parsedURL = urlparse(url)
-    if parsedURL.query != '' or parsedURL.fragment != '':
-        return False  # no queries or fragments permitted
-    regex = re.compile(
-        r'^https?://'
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
-        r'localhost|'
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-        r'(?::\d+)?'
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    return regex.search(url) is not None
+    # while(len(visited)<20):
+    while(stack):
+        link = stack.pop()  # next link
+        if link not in visited:
+            # print link
+            visited.add(link)                   # mark as seen
+            stack.extend(getLinksOnPage(link))  # visit new links later
+            # print 'link', link, type(link)
+            tree.insert(link)                   # add link hierarchy
 
-# Checks if url is within domain
-def inDomain(url):
-    return DOMAIN in url
+    return tree
 
-# Returns all sub-URLs on given URL that are both valid and in domain
-def generateSubURLs(url):
-    return filter(lambda x: inDomain(x) and validURL(x), getURLsOnPage(url))
 
 GO_CARDLESS = "https://gocardless.com"
 webCrawler(GO_CARDLESS)
 
 
+# print correctSyntax('mailto:help@gocardless.com')
+# print validURL('mailto:help@gocardless.com')
+# print validURL('')
 
+# print formatURL("https://gocardless.com")
+# print formatURL("https://gocardless.com/")
+# print formatURL("http://gocardless.com")
+# print formatURL("http://gocardless.com/")
+# print formatURL("http://gocardless.com/about/")
+# print formatURL("https://gocardless.com/about")
 
+# frag = 'https://gocardless.com/#learn-more'
+# print urlopen(frag).geturl()
 
-
+# print urlsplit(GO_CARDLESS).geturl()
+# print urlsplit("https://blog.gocardless.com").geturl()
+# print urlsplit("https://gocardless.com/blog").geturl()
 
 
 
