@@ -29,8 +29,8 @@ class URLtree(object):
     from utils import formatURL
 
     def __init__(self, data=None):
-        self.children = []  # list of trees
-        self.data = data
+        self.children = []  # list of URLtrees
+        self.data = self.formatURL(data)
 
     def setData(self, data):
         self.data = data
@@ -57,15 +57,18 @@ class URLtree(object):
         url = str(self.formatURL(url))
         print 'url_to_add', url
         path = url.split('/')
+        # print 'path[0]', path[0]
+        # print 'self.getData()', self.getData()
+        # print 'path[0] == self.getData()', path[0] == self.getData()
         if self.getData() == path[0]:
-            path = '/'.join(path[1:])
-            self.insert(path)
+            if len(path[1:]) > 0:  # more to add
+                path = '/'.join(path[1:])
+                self.insert(path)
             return self
         for child in self.getChildren():
             if child.getData() == path[0]:  # if part of explored level
-                if len(path[1:]) > 0:  # more to add
-                    path = '/'.join(path[1:])
-                    child.insert(path)  # assuming not identicle string
+                path = '/'.join(path[1:])
+                child.insert(path)  # assuming not identicle string
                 return self
         path = '/'.join(path)  # relative URL
         self.addChild(path)

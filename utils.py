@@ -78,7 +78,7 @@ def getLinksOnPage(url):
 #         url = url[:-1]  # ignore trailing '/'
 #     return url
 
-def formatURL(url):
+def formatURL(self, url):
     urlParsed = urlparse(url)
     url = urlParsed.netloc + urlParsed.path  # only keep domain and path
     if len(url) > 4 and url[:4] == 'www.':   # omit 'www.'
