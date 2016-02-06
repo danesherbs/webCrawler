@@ -86,7 +86,7 @@ class URLtree(object):
         path = '/'.join(path)  # relative URL
         if path != '':  # don't add empty string
             self.addChild(path)
-        print 'inserted', path, 'under', self.getData()
+            print 'inserted', path, 'under', self.getData()
         return self
 
     def __str__(self):

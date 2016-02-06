@@ -62,7 +62,6 @@ def getLinksOnPage(url):
     return links
 
 
-
 def printTree(root):
     visited, stack = set(), [root]
     while stack:
