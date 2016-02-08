@@ -63,3 +63,7 @@ def noFragments(url):
 # Checks if URL is within domain
 def inDomain(url):
     return DOMAIN in urlparse(url).netloc
+
+
+if __name__ == '__main__':
+    print getLinksOnPage('https://gocardless.com')
