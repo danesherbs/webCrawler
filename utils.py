@@ -1,12 +1,10 @@
 from urllib2 import urlopen, HTTPError, URLError
-from urlparse import urljoin, urlparse, urlsplit
+from urlparse import urljoin, urlparse
 from bs4 import BeautifulSoup
 import requests
-import re
 
 
-DOMAIN = 'gocardless.com'
-cache = {}  # queried URLs
+cache = {}  # proxy cache (stores queried URLs)
 
 # Takes a URL and returns an exhaustive list of links present on page
 def getLinksOnPage(url):
@@ -24,8 +22,7 @@ def getLinksOnPage(url):
 # Retrieves URL (if redirected, retrieves redirected URL)
 # Uses proxy cache in case connection is slow
 def getURL(url):
-    # TODO: slow connection - just check if valid
-    if not validURL(url):
+    if containsQueries(url) or containsFragments(url):
         cache[url] = None
     elif url not in cache:
         try:
@@ -36,34 +33,10 @@ def getURL(url):
             cache[url] = None
     return cache[url]
 
-# Combines multiple checks in one
-def validURL(url):
-    return correctSyntax(url) and inDomain(url) and noFragments(url) and noQueries(url)
+# Checks if queries in URL
+def containsQueries(url):
+    return urlparse(url).query != ''
 
-# Checks syntax of URL
-# Regex from Django
-def correctSyntax(url):
-    regex = re.compile(
-        r'^https?://'
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
-        r'localhost|'
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-        r'(?::\d+)?'
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    return regex is not None
-
-# Checks if no queries in URL
-def noQueries(url):
-    return urlparse(url).query == ''
-
-# Checks if no fragments in URL
-def noFragments(url):
-    return urlparse(url).fragment == ''
-
-# Checks if URL is within domain
-def inDomain(url):
-    return DOMAIN in urlparse(url).netloc
-
-
-if __name__ == '__main__':
-    print getLinksOnPage('https://gocardless.com')
+# Checks if fragments in URL
+def containsFragments(url):
+    return urlparse(url).fragment != ''

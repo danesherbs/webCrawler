@@ -1,6 +1,6 @@
 class Trie(object):
 
-    def __init__(self, word):
+    def __init__(self, word=None):
         self.word = word
         self.children = []  # list of tries
 
@@ -10,7 +10,9 @@ class Trie(object):
 
     def insert(self, word):
         print 'Received', word
-        if word == self.word:
+        if self.word is None:
+            self.word = word  # initialise root node
+        elif word == self.word:
             return  # already inserted
         elif word.startswith(self.word):  # matches current node
             remainingWord = word[len(self.word):]
@@ -22,7 +24,7 @@ class Trie(object):
         # else:  # insert parent node
 
     def __str__(self, depth=0):
-        outputStr = "  " * depth + self.word + "\n"
+        outputStr = "\t" * depth + self.word + "\n"
         for child in self.children:
             outputStr += child.__str__(depth+1)
         return outputStr
