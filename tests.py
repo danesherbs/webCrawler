@@ -60,3 +60,25 @@ def testGetLinksOnPage():
     GOOGLE = 'https://gocardless.com'
     links = getLinksOnPage(GOOGLE)
     assert len(links) == 53
+
+
+
+###########
+# TRIE.PY #
+###########
+
+from trie import Trie
+
+def testTrieOutput():
+
+    trie = Trie()
+    trie.insert('gocardless.com')
+    trie.insert('gocardless.com/faq')
+    trie.insert('gocardless.com')
+    trie.insert('gocardless.com/faq/team')
+    trie.insert('gocardless.com/article/123')
+    trie.insert('gocardless.com/article/123/123')
+
+    expectedOutput = open('testTrie','r')
+    assert str(trie) == expectedOutput.read()
+    expectedOutput.close()

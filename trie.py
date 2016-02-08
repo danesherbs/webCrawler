@@ -19,7 +19,7 @@ class Trie(object):
                     return  # cut search
             self.addChild(remainingWord)  # new child needed
 
-    def __str__(self, depth=-1):
+    def __str__(self, depth=-1):  # depth=-1 to skip needless indentation from root node ''
         outputStr = "\t" * max(depth, 0) + self.word + "\n"
         for child in self.children:
             outputStr += child.__str__(depth+1)
@@ -36,10 +36,14 @@ if __name__ == '__main__':
             url = url[:-1]
         return url
 
-    trie = Trie('gocardless.com')
+    trie = Trie()
+    trie.insert('gocardless.com')
     trie.insert('gocardless.com/faq')
     trie.insert('gocardless.com')
     trie.insert('gocardless.com/faq/team')
     trie.insert('gocardless.com/article/123')
     trie.insert('gocardless.com/article/123/123')
-    print trie
+
+    testTrie = open('testTrie','w')
+    testTrie.write(str(trie))
+    testTrie.close()
