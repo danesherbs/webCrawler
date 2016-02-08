@@ -15,10 +15,10 @@ def getLinksOnPage(url):
     links = []
     for anchor in soup.findAll('a'):
         href = anchor.get('href')
-        absURL = urljoin(url, href)   # absolute URL
-        absURL = getURL(absURL)       # see if invalid or redirected
-        if absURL is not None:        # if genuine URL
-            links.append(absURL)      # add URL to list
+        absURL = urljoin(url, href)  # absolute URL
+        absURL = getURL(absURL)      # see if invalid or redirected
+        if absURL is not None:       # if genuine URL
+            links.append(absURL)     # add URL to list
     return links
 
 # Retrieves URL (if redirected, retrieves redirected URL)

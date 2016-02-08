@@ -1,4 +1,4 @@
-from tree import URLtrie
+from trie import URLtrie
 from utils import getLinksOnPage, getURL
 from collections import deque
 
@@ -25,6 +25,7 @@ class WebCrawler(object):
                 visited.add(link)                   # mark as seen
                 queue.extend(getLinksOnPage(link))  # visit new links later
                 trie.insert(link)                   # put in trie hierarchy
+                print link
         return trie
 
 if __name__ == '__main__':
