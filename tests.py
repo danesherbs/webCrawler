@@ -1,6 +1,6 @@
-###########
+############
 # UTILS.PY #
-###########
+############
 
 
 # containsQueries
@@ -30,8 +30,33 @@ def testContainsFragmentsReturnsFalseForStringWithoutFragment():
 
 
 # getURL
+# Better implementation if more time available: use a mock of the
+# remote service to avoid queries potentially slowing down tests
 
-from utils import getURL
+from utils import getURL, getLinksOnPage
+import os
 
-def testGetURLreturnsNoneForInvalidURL():
-    pass
+def testGetURLreturnsNoneForSyntaticallyIncorrectURL():
+    url = getURL('not_a_url')
+    assert url is None
+
+def testGetURLreturnsNoneForNonExistantWebsite():
+    url = getURL('https://useacard.com')
+    assert url is None
+
+def testGetURLreturnsNoneForURLnotPointingToPage():
+    url = getURL('mailto:someone@example.com')
+    assert url is None
+
+def testGetURLreturnsValidURLforValidURL():
+    GO_CARDLESS = 'https://gocardless.com'
+    url = getURL(GO_CARDLESS)
+    assert url == GO_CARDLESS
+
+def testGetLinksOnPage():
+    # Test is fragile - assumes number of links on page won't change
+    # With more time: create a mock website with known number of links
+    # and don't change it.
+    GOOGLE = 'https://gocardless.com'
+    links = getLinksOnPage(GOOGLE)
+    assert len(links) == 53

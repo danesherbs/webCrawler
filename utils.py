@@ -27,9 +27,10 @@ def getURL(url):
     elif url not in cache:
         try:
             cache[url] = urlopen(url).geturl()
-        except (HTTPError, URLError):
-            # HTTPError - dead link
-            # URLError  - invalid URL (e.g. mailto)
+        except (HTTPError, URLError, ValueError):
+            # HTTPError  - dead link
+            # URLError   - URL doesn't point to page (e.g. mailto)
+            # ValueError - URL not well-formed
             cache[url] = None
     return cache[url]
 
