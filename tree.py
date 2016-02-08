@@ -1,4 +1,4 @@
-class Tree(object):
+class Trie(object):
 
     def __init__(self, data=None):
         self.children = []  # list of trees
@@ -12,8 +12,8 @@ class Tree(object):
         return self.data
 
     def addChild(self, childData):
-        childTree = Tree(childData)
-        self.children.append(childTree)
+        childTrie = Trie(childData)
+        self.children.append(childTrie)
         return self
 
     def addChildren(self, childrenData):
@@ -32,15 +32,15 @@ class Tree(object):
 
 
 from urlparse import urlparse
-class URLtree(Tree):
+class URLtrie(Trie):
 
     def __init__(self, data=None):
-        self.children = []  # list of URLtrees
+        self.children = []  # list of URLtries
         self.data = self.formatURL(data)
 
     def addChild(self, childData):
-        childTree = URLtree(childData)  # add URLtree instead of Tree
-        self.children.append(childTree)
+        childTrie = URLtrie(childData)  # add URLtrie instead of Trie
+        self.children.append(childTrie)
         return self
 
     # Helper for insert; omits 'http(s)://', 'www.' and trailing '/'

@@ -1,37 +1,33 @@
-from tree import URLtree
+from tree import URLtrie
 from utils import getLinksOnPage, getURL
-from Queue import Queue
+from collections import deque
 
 class WebCrawler(object):
 
-    # Crawls given URL and produces sitemap (stored in current directory)
-    def crawl(self, url, limit=100):
-        tree = self.webCrawlerBFS(url, limit)
+    # Uses trie (produced by crawl) to
+    # write a sitemap in current directory.
+    def generateSitemap(self, url, limit=100):
+        trie = self.crawl(url, limit)
         sitemap = open('sitemap', 'w')
-        sitemap.write(str(tree))
+        sitemap.write(str(trie))
         sitemap.close()
         print '\n\nSitemap saved in current directory.\n\n'
 
-    # Helper for crawl -- constructs trie via breadth first search
-    def webCrawlerBFS(self, url, limit=100):
-        # initialise visited URLs
-        visited = set([getURL(url)])
-        # initialise queue
-        queue = Queue()
-        for homeLink in getLinksOnPage(url):
-            queue.put(homeLink)
-        # initialise tree
-        tree = URLtree(url)
+    # Crawls given URL and produces a trie representing
+    # a hierarchy. Uses breadth first search.
+    def crawl(self, url, limit=100):
+        visited = set()                 # initialise visited URLs
+        queue   = deque([getURL(url)])  # initialise queue
+        trie    = URLtrie(url)          # initialise tree
         while(len(visited) < limit):
-            link = queue.get()                        # next link
+            link = queue.popleft()                  # next link
             if link not in visited:
-                visited.add(link)                     # mark as seen
-                map(queue.put, getLinksOnPage(link))  # visit new links later
-                print link
-                tree.insert(link)                     # put in tree hierarchy
-        return tree
+                visited.add(link)                   # mark as seen
+                queue.extend(getLinksOnPage(link))  # visit new links later
+                trie.insert(link)                   # put in trie hierarchy
+        return trie
 
 if __name__ == '__main__':
     GO_CARDLESS = "https://gocardless.com"
     webCrawler = WebCrawler()
-    webCrawler.crawl(GO_CARDLESS)
+    webCrawler.generateSitemap(GO_CARDLESS, limit=50)
