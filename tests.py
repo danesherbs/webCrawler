@@ -67,6 +67,7 @@ def testGetLinksOnPage():
 # TRIE.PY #
 ###########
 
+
 from trie import Trie
 
 def testTrieOutput():
