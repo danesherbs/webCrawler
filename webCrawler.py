@@ -46,4 +46,4 @@ class WebCrawler(object):
 if __name__ == '__main__':
     GO_CARDLESS = "https://gocardless.com"
     webCrawler = WebCrawler()
-    webCrawler.generateSitemap(GO_CARDLESS, limit=20)
+    webCrawler.generateSitemap(GO_CARDLESS, limit=30)

@@ -1,0 +1,104 @@
+_       __     __       ______                    __
+| |     / /__  / /_     / ____/________ __      __/ /__  _____
+| | /| / / _ \/ __ \   / /   / ___/ __ `/ | /| / / / _ \/ ___/
+| |/ |/ /  __/ /_/ /  / /___/ /  / /_/ /| |/ |/ / /  __/ /
+|__/|__/\___/_.___/   \____/_/   \__,_/ |__/|__/_/\___/_/
+
+
+
+WebCrawler crawls a given domain (and doesn't visit foreign pages) using
+Breadth First Search. WebCrawler constructs a Trie as it crawls, which
+stores the site hierarchy.
+
+webCrawler.py contains a class, WebCrawler. WebCrawler has two useful built-in
+functions: crawl and generateSitemap.
+
+    crawl: Performs BFS through given domain and outputs the Trie.
+
+    generateSitemap: Uses Trie (produced by crawl) to write a sitemap
+                     in current directory.
+
+Run webCrawler.py for a sample output. This generates a sitemap, which
+is stored in your current directory.
+
+Running the tests requires pytest. Run the tests by entering
+    py.test tests.py
+in terminal.
+
+
+################################################################################
+
+
+Design decisions:
+
+    - Initially I used DFS on the domain because the result string could be
+      constructed easily this way. For example, the links visited would be:
+            'abc.com'
+            'abc.com/about'
+            'abc.com/about/team'
+            'abc.com/news'
+            'abc.com/news/Feb2016'
+      The hierarchy could easily be constructed by counting the number of '/',
+      and indenting the line by that number. To continue the example above:
+            'abc.com'
+              'abc.com/about'
+                'abc.com/about/team'
+              'abc.com/news'
+                'abc.com/news/Feb2016'
+      However, there were some deep links in the website. E.g.
+            'abc.com/very/deep/link'
+      which was accessible from
+            'abc.com'
+      resulting in
+            'abc.com'
+                      'abc.com/very/deep/link'
+              'abc.com/about'
+              ...
+      which is misleading and confusing.
+
+      To fix this, there were two solutions I thought of. I could have continued
+      to perform DFS, but whenever considering a deep node, the shallower connection
+      could be taken (shallowness define here to be the number of hops from the
+      root node).
+
+      It seemed easier to construct a hierarchy using BFS and avoid the problem
+      of dealing of resolving deep nodes altogether. For example, if
+            'abc.com/this/deep'
+      and
+            'abc.com/this/is/deeper'
+      existed, then
+            'abc.com/this'
+      would always be added before
+            'abc.com/this/is/deeper'
+      (avoiding the problem).
+
+      This approach was less efficient: it first constructs the Trie, then
+      has to visit each link again. I decided to do it this way though,
+      since it was more clear.
+
+
+    - Since 'help.gocardless.com' and 'gocardless.com/help/' point to the same
+      page, I wanted to test if the page was redirected. This is taken care of
+      in getURL (in utils.py). However, since it queries the server, I used
+      a proxy cache to avoid querying the same URL twice.
+
+      Another solution was to ignore redirections, and just check that the
+      URL is syntactically correct. This would be faster but less robust.
+      Here I chose robustness over performance.
+
+
+Interesting parts:
+
+    - Building the Trie was the most fun. I initially came up with a Trie
+      specific for URLs, but realised it was better to build a general Trie,
+      then do any parsing before the insertion. (This would be handy if a
+      Trie was needed in the future for some other purpose).
+
+Challenging parts:
+
+    - What the sitemap should look like. There's some choice in how to represent
+      the site. It's possible to form a hierarchy which places
+      'gocardless.com' on the same level as 'help.gocardless.com', or
+      'help.gocardless.com' under 'gocardless.com' because it's accessible
+      from 'gocardless.com' (but 'gocardless.com' is also accessible from
+      'help.gocardless.com' too!).
